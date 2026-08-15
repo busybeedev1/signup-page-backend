@@ -13,7 +13,6 @@ app.use(express.json());
 
 // use cors
 const allowedOrigins = [
-    "http://localhost:5173",
     "http://localhost:3030",
     "https://signup-page-frontend.vercel.app",
 ];
