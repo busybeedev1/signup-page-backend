@@ -1,68 +1,110 @@
 import dotenv from "dotenv";
 dotenv.config();
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 
-// configuring app
+import useRouter from "./routers/userRouter.js";
+
 const app = express();
 
-//middlewares
-const port = process.env.PORT;
-app.use(express.json());
+// ===============================
+// PORT
+// ===============================
+const port = process.env.PORT || 4017;
 
-// use cors
+
+// ===============================
+// ALLOWED FRONTEND ORIGINS
+// ===============================
 const allowedOrigins = [
-    "http://localhost:5173",
-    "http://localhost:4017",
-    "http://localhost:3030",
-    "https://signup-page-frontend.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:4017",
+  "http://localhost:3030",
+  "https://signup-page-frontend.vercel.app",
 ];
 
+
+// ===============================
+// MIDDLEWARE
+// ===============================
+
+// Parse JSON request bodies
+app.use(express.json());
+
+// Enable CORS
 app.use(
-    cors({
-        origin: function (origin, callback) {
-            if (!origin || allowedOrigins.includes(origin)) {
-                callback(null, true);
-            } else {
-                callback(new Error("Not allowed by CORS"));
-            }
-        },
-        credentials: true,
-    })
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin
+      // (Postman, server-to-server requests, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+
+    credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "PATCH",
+      "OPTIONS",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
+  })
 );
 
-// function to connect the database
+
+// ===============================
+// DATABASE CONNECTION
+// ===============================
 async function connectingDatabase() {
-    try {
-        await mongoose.connect(process.env.DATABASE_URL);
-        console.log("Database Connected: You Can Proceed!");
-    } catch (error) {
-        console.log(error.message);
-    }
-};
+  try {
+    await mongoose.connect(process.env.DATABASE_URL);
+
+    console.log("Database Connected: You Can Proceed!");
+  } catch (error) {
+    console.error("Database connection failed:", error.message);
+  }
+}
 
 connectingDatabase();
 
-// test to ensure that backend is working
+
+// ===============================
+// TEST ROUTE
+// ===============================
 app.get("/", (req, res) => {
-    res.send("backend is working!")
+  res.status(200).json({
+    success: true,
+    message: "Signup backend is working!",
+  });
 });
 
 
-// routing
-import useRouter from "./routers/userRouter.js";
-
+// ===============================
+// API ROUTES
+// ===============================
 app.use("/api/v1", useRouter);
 
-// use cors
 
-// app.use(cors({
-//   origin: "http://localhost:5173",
-//   credentials: true
-// }));
-
-// port being listened to
+// ===============================
+// START SERVER
+// ===============================
 app.listen(port, () => {
-    console.log(`server is up and running at ${port}`);
+  console.log(`Server is up and running on port ${port}`);
 });
