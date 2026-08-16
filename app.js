@@ -4,20 +4,16 @@ dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-
 import useRouter from "./routers/userRouter.js";
 
 const app = express();
 
-// ===============================
-// PORT
-// ===============================
 const port = process.env.PORT || 4017;
 
+// ============================
+// CORS
+// ============================
 
-// ===============================
-// ALLOWED FRONTEND ORIGINS
-// ===============================
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:4017",
@@ -25,57 +21,28 @@ const allowedOrigins = [
   "https://signup-page-frontend.vercel.app",
 ];
 
-
-// ===============================
-// MIDDLEWARE
-// ===============================
-
-// Parse JSON request bodies
-app.use(express.json());
-
-// Enable CORS
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin
-      // (Postman, server-to-server requests, etc.)
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-
+    origin: allowedOrigins,
     credentials: true,
-
-    methods: [
-      "GET",
-      "POST",
-      "PUT",
-      "DELETE",
-      "PATCH",
-      "OPTIONS",
-    ],
-
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
+// ============================
+// JSON
+// ============================
 
-// ===============================
-// DATABASE CONNECTION
-// ===============================
+app.use(express.json());
+
+// ============================
+// DATABASE
+// ============================
+
 async function connectingDatabase() {
   try {
     await mongoose.connect(process.env.DATABASE_URL);
-
     console.log("Database Connected: You Can Proceed!");
   } catch (error) {
     console.error("Database connection failed:", error.message);
@@ -84,10 +51,10 @@ async function connectingDatabase() {
 
 connectingDatabase();
 
-
-// ===============================
+// ============================
 // TEST ROUTE
-// ===============================
+// ============================
+
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
@@ -95,16 +62,16 @@ app.get("/", (req, res) => {
   });
 });
 
+// ============================
+// ROUTES
+// ============================
 
-// ===============================
-// API ROUTES
-// ===============================
 app.use("/api/v1", useRouter);
 
+// ============================
+// SERVER
+// ============================
 
-// ===============================
-// START SERVER
-// ===============================
 app.listen(port, () => {
   console.log(`Server is up and running on port ${port}`);
 });
