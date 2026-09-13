@@ -15,11 +15,12 @@ const port = process.env.PORT || 4017;
 // ============================
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:4017",
-  "http://localhost:3030",
-  "https://signup-page-frontend.vercel.app",
-  "https://signup-page-frontend-dnolzl8z2-busybeedev2.vercel.app",
+    "http://localhost:5173",
+    "http://localhost:4017",
+    "http://localhost:3030",
+
+    "https://signup-page-frontend.vercel.app",
+    "https://signup-page-frontend-dnolzl8z2-busybeedev2.vercel.app",
 ];
 
 app.use(
