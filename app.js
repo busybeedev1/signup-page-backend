@@ -4,7 +4,7 @@ dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import useRouter from "./routers/userRouter.js";
+import router from "./routers/userRouter.js";
 
 const app = express();
 
@@ -68,7 +68,7 @@ app.get("/", (req, res) => {
 // ROUTES
 // ============================
 
-app.use("/api/v1", useRouter);
+app.use("/api/v1", router);
 
 // ============================
 // SERVER
