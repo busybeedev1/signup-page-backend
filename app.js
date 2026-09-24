@@ -21,6 +21,7 @@ const allowedOrigins = [
 
     "https://signup-page-frontend.vercel.app",
     "https://signup-page-frontend-dnolzl8z2-busybeedev2.vercel.app",
+    "https://signup-page-frontend-7hg9kd4pz-busybeedev2.vercel.app/",
 ];
 
 app.use(
